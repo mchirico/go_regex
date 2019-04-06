@@ -15,7 +15,8 @@ matrix:
     - go get -u github.com/mchirico/date/parse
     - go get gopkg.in/yaml.v2
     before_install:
-    - for i in $(ls fixtures/fixture_*.enc); do openssl aes-256-cbc -k "$super_secret_password" -in ${i} -out ${i%%.*} -d; done
+    - for i in $(ls fixtures/*.enc); do openssl aes-256-cbc -k "${super_secret_password}" -in ${i} -out ${i%%.*} -d; done
+    - ls fixtures/*
     - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
       > ./cc-test-reporter
     - chmod +x ./cc-test-reporter
