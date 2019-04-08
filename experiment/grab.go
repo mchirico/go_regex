@@ -56,10 +56,15 @@ func main() {
 		}
 
 		if Check(top, v, &rTop) {
-			load := strings.Split(rTop,"load average:")
+			load := strings.Split(rTop, "load average:")
+			drop = strings.ReplaceAll(drop, "\t", " ")
+			drop = strings.ReplaceAll(drop, "  ", " ")
+			drop = strings.ReplaceAll(drop, " ", ":")
+			sdrop := strings.Split(drop, ":")
 
 			tt, _ := parse.DateTimeParse(rDate).GetTime()
-			fmt.Println(tt, ip, rSlice, drop, load[1])
+			// fmt.Println(sdrop,sdrop[0])
+			fmt.Println(tt, ip, rSlice, sdrop[7], sdrop[9], sdrop[11], load[1])
 		}
 
 		counter += 1
