@@ -32,9 +32,7 @@ func TestIdea(t *testing.T) {
 	var regLooper = &reg
 
 	Looper(f, regLooper)
-	fmt.Println(reg.idx)
-	fmt.Println(reg.seg)
-	fmt.Println(reg.seg[1].size)
+
 	fp, _ := os.Open("../fixtures/slicestore")
 	defer fp.Close()
 
@@ -47,10 +45,13 @@ func TestIdea(t *testing.T) {
 		}
 	}
 
-	// Here's how we get value
+	// Here's how we get a date value
 
 	s, _ := ReadIdx("../fixtures/slicestore", reg.seg[14].offset,
 		reg.seg[14].size)
+	if s[reg.seg[14].idx[1]] != "Sat Apr  6 22:08:02 UTC 2019" {
+		t.Fatalf("Didn't get date:%v\n", s[reg.seg[14].idx[1]])
+	}
 	fmt.Println(s[reg.seg[14].idx[1]])
 
 }

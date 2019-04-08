@@ -19,7 +19,7 @@ func findRet(b []byte, n int) (int, error) {
 		}
 	}
 	if p == 0 {
-		return 0, errors.New("Error in findRet. No return.")
+		return 0, errors.New("No return found. (findRet)")
 	}
 
 	return p, nil
@@ -31,8 +31,8 @@ type F struct {
 	B      []byte
 	P      int // Pointer to return
 	N      int // Number of bytes return from read
-	O      int64
-	offset int64
+	O      int64 // New offset
+	offset int64  // Offset one behind
 	Finfo  os.FileInfo
 }
 
@@ -78,9 +78,9 @@ func (f *F) Read() ([]byte, error) {
 	p, err := findRet(b, n)
 
 	f.B = b
-	f.N = n
-	f.O = o
-	f.P = p
+	f.N = n  // Number of bytes on read
+	f.O = o  // New offset
+	f.P = p  // Pointer to return
 
 	return f.B[0:f.P], err
 
