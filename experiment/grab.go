@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/mchirico/date/parse"
 	"io/ioutil"
 	"regexp"
 	"strings"
@@ -11,10 +12,12 @@ type T interface {
 	FindString(string) string
 }
 
-func Check(t T, s string, v *string) {
+func Check(t T, s string, v *string) bool {
 	if t.FindString(s) != "" {
 		*v = t.FindString(s)
+		return true
 	}
+	return false
 }
 
 func main() {
@@ -27,15 +30,19 @@ func main() {
 
 	date := regexp.MustCompile(`.*UTC 2019.*`)
 	slice := regexp.MustCompile(`^slice.*`)
-	//bond0 := regexp.MustCompile(`^bond0.*`)
+	bond0 := regexp.MustCompile(`^bond0.*`)
+	top := regexp.MustCompile(`^top -.*`)
 
 	counter := 0
 
 	rSlice := ""
 	rDate := ""
-	//rBond := ""
+	rBond := ""
+	rTop := ""
+	drop := ""
+	ip := ""
 
-	for idx, v := range recs {
+	for _, v := range recs {
 
 		if date.FindString(v) != "" {
 			//rDate = date.FindString(v)
@@ -43,12 +50,29 @@ func main() {
 
 		Check(slice, v, &rSlice)
 		Check(date, v, &rDate)
-		fmt.Println(rSlice, rDate)
-		if rDate != "" {
+
+		if Check(bond0, v, &rBond) {
 			counter = -1
-			fmt.Println(idx, rDate)
 		}
+
+		if Check(top, v, &rTop) {
+			load := strings.Split(rTop,"load average:")
+
+			tt, _ := parse.DateTimeParse(rDate).GetTime()
+			fmt.Println(tt, ip, rSlice, drop, load[1])
+		}
+
 		counter += 1
+		if counter == 1 {
+			r := strings.Split(v, ":")
+			r = strings.Split(r[1], " ")
+			ip = r[0]
+
+		}
+
+		if counter == 4 {
+			drop = v
+		}
 	}
 
 	//fmt.Println(recs[0])
